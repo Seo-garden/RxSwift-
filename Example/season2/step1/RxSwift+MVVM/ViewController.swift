@@ -1,4 +1,4 @@
-//46분~~
+//1시간 30분~ disposeBag 부터 다시 
 import RxSwift
 import SwiftyJSON
 import UIKit
@@ -20,6 +20,8 @@ let MEMBER_LIST_URL = "https://my.api.mockaroo.com/members_with_avatar.json?key=
 class ViewController: UIViewController {
     @IBOutlet var timerLabel: UILabel!
     @IBOutlet var editView: UITextView!
+    
+    var disposBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,13 +49,18 @@ class ViewController: UIViewController {
     //1. create
     //2. subscribe
     //3. onNext
-    //------끝-----
+    //------끝----- 이 난다는게 재사용이 불가능하다.
     //4. onCompleted / onError
     //5. Disposed
     
-    func downloadJson(_ url:String) -> Observable<String?> {        //Observable 형태로 반환하면 나중에 생기는 데이터를 반환
-
+    func downloadJson(_ url:String) -> Observable<String> {        //Observable 형태로 반환하면 나중에 생기는 데이터를 반환
+//        return Observable.just("HelloWorld")            //아래의 3줄을 생략할 수 있다.     just 는 하나만 보낼 수 있는데,
+//        return Observable.just(["Hello", "World"])   //이와 같이 배열로 하게 되면 둘다 보낼 수 있다.
+//        return Observable.from(["Hello","World"])    //이와 같이 배열로 보내게 되면 Optional[Hello], 따로따로 출력된다.
         return Observable.create() { emitter in
+//            emitter.onNext("Hello World")
+//            emitter.onCompleted()
+//            return Disposables.create()
             let url = URL(string: url)!
             let task = URLSession.shared.dataTask(with: url) { data, _, err in      //URLSession 자체가 메인쓰레드가 아닌 다른 쓰레드에서 동작하는
                 guard err == nil else {
@@ -69,7 +76,6 @@ class ViewController: UIViewController {
             }
             
             task.resume()
-            
             return Disposables.create() {       //취소를 했을 때 해야하는 행위
                 task.cancel()
             }
@@ -97,27 +103,38 @@ class ViewController: UIViewController {
     
     @IBAction func onLoad() {
         editView.text = ""
-        setVisibleWithAnimation(self.activityIndicator, true)
+        setVisibleWithAnimation(activityIndicator, true)
         
         //2. Observable 로 오는 데이터로 받아서 처리하는 방법
-        downloadJson(MEMBER_LIST_URL)
-            .subscribe { event in       //subscribe 가 나중에 오면 호출한다.      [weak self]
-                switch event {
-                case let .next(json) :      //데이터가 전달될 때 next로 받는다.
-                    DispatchQueue.main.async {
-                        self.editView.text = json
-                        self.setVisibleWithAnimation(self.activityIndicator, false)
-                    }
-                case .completed:        //데이터가 완전히 전달되었을 때
-                    break
-                case .error(_):     //.completed or .error 가 왔을 때 클로저는 종료가 되기 때문에, 참조가 생기지 않는다. 그래서 [weak self] 를 사용할 필요 없이 53라인에 한줄만 f.onCompleted 를 호출하게 되면 참조가 사라진다.
-                    break
-                }
-            }
-//        disposable.dispose()        //버린다라는 뜻인데, 작업한 것을 끝나지 않았어도 dispose() 를 실행하면 동작을 취소할 수 있다.
+//        _ = downloadJson(MEMBER_LIST_URL)
+//            .debug()        //.subscribe 전의 데이터가 전달되는 동안 전달되는 데이터를 다 찍어낼 수 있다.
+//            .subscribe { event in       //subscribe 가 나중에 오면 호출한다.      [weak self]
+//                switch event {
+//                case let .next(json) :      //데이터가 전달될 때 next로 받는다.
+//                    DispatchQueue.main.async {
+//                        self.editView.text = json
+//                        self.setVisibleWithAnimation(self.activityIndicator, false)
+//                    }
+//                case .completed:        //데이터가 완전히 전달되었을 때
+//                    break
+//                case .error(_):     //.completed or .error 가 왔을 때 클로저는 종료가 되기 때문에, 참조가 생기지 않는다. 그래서 [weak self] 를 사용할 필요 없이 1번 방법에 한줄만 f.onCompleted 를 호출하게 되면 참조가 사라진다.
+//                    break
+//                    //completed 와 error 를 받고싶지 않으면
+//                    
+//                }
+//            }
+        let jsonObservable = downloadJson(MEMBER_LIST_URL)
+        let helloObservable = Observable.just("Hello World")
         
-        
-        
-        
+        Observable.zip(jsonObservable, helloObservable) { $1 + "'\n'" + $0 }
+            .observeOn(MainScheduler.instance)        //super: operator
+            .subscribe(onNext: { json in
+                self.editView.text = json
+                self.setVisibleWithAnimation(self.activityIndicator, false)
+            })
+        //disposable.dispose()        //버린다라는 뜻인데, 작업한 것을 끝나지 않았어도 dispose() 를 실행하면 동작을 취소할 수 있다.
+//        _ = downloadJson(MEMBER_LIST_URL)
+//            .subscribe(onNext: { print($0) }, onCompleted: { print($0) })     //completed 와 error 를 받고싶지 않으면 이렇게도 할 수 있다.
+            .disposed(by: disposBag)
     }
 }
