@@ -120,15 +120,14 @@ class ViewController: UIViewController {
 //                case .error(_):     //.completed or .error 가 왔을 때 클로저는 종료가 되기 때문에, 참조가 생기지 않는다. 그래서 [weak self] 를 사용할 필요 없이 1번 방법에 한줄만 f.onCompleted 를 호출하게 되면 참조가 사라진다.
 //                    break
 //                    //completed 와 error 를 받고싶지 않으면
-//                    
 //                }
 //            }
         let jsonObservable = downloadJson(MEMBER_LIST_URL)
         let helloObservable = Observable.just("Hello World")
         
         Observable.zip(jsonObservable, helloObservable) { $1 + "'\n'" + $0 }
-            .observeOn(MainScheduler.instance)        //super: operator
-            .subscribe(onNext: { json in
+            .observe(on: MainScheduler.instance)        //super: operator       다운스트림의 쓰레드를 변경
+            .subscribe(onNext: { json in                //업스트림의 쓰레드를 변경
                 self.editView.text = json
                 self.setVisibleWithAnimation(self.activityIndicator, false)
             })

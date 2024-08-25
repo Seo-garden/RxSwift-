@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		62C62A5F2C7B31E2002B7B95 /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C62A5E2C7B31E2002B7B95 /* Menu.swift */; };
+		62D73B382C7B37100038EA94 /* MenuListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62D73B372C7B37100038EA94 /* MenuListViewModel.swift */; };
 		A168F0A022F7FB2C00A9E178 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A168F09F22F7FB2C00A9E178 /* AppDelegate.swift */; };
 		A168F0A222F7FB2C00A9E178 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A168F0A122F7FB2C00A9E178 /* MenuViewController.swift */; };
 		A168F0A522F7FB2C00A9E178 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A168F0A322F7FB2C00A9E178 /* Main.storyboard */; };
@@ -22,6 +24,8 @@
 
 /* Begin PBXFileReference section */
 		606131A3A3F3F4D6822F8E43 /* Pods-RxSwift+MVVM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxSwift+MVVM.debug.xcconfig"; path = "Target Support Files/Pods-RxSwift+MVVM/Pods-RxSwift+MVVM.debug.xcconfig"; sourceTree = "<group>"; };
+		62C62A5E2C7B31E2002B7B95 /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
+		62D73B372C7B37100038EA94 /* MenuListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuListViewModel.swift; sourceTree = "<group>"; };
 		A168F09C22F7FB2C00A9E178 /* RxSwift+MVVM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RxSwift+MVVM.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A168F09F22F7FB2C00A9E178 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A168F0A122F7FB2C00A9E178 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
@@ -135,6 +139,7 @@
 		A1869B882360A7810088AA9A /* Pages */ = {
 			isa = PBXGroup;
 			children = (
+				62C62A5E2C7B31E2002B7B95 /* Menu.swift */,
 				A1869B892360A78C0088AA9A /* MenuList */,
 				A1869B8A2360A79F0088AA9A /* Order */,
 			);
@@ -146,6 +151,7 @@
 			children = (
 				A168F0A122F7FB2C00A9E178 /* MenuViewController.swift */,
 				A168F0BB22FAF9B800A9E178 /* MenuItemTableViewCell.swift */,
+				62D73B372C7B37100038EA94 /* MenuListViewModel.swift */,
 			);
 			path = MenuList;
 			sourceTree = "<group>";
@@ -292,11 +298,13 @@
 			files = (
 				A168F0A222F7FB2C00A9E178 /* MenuViewController.swift in Sources */,
 				A168F0B622FADE5B00A9E178 /* APIService.swift in Sources */,
+				62C62A5F2C7B31E2002B7B95 /* Menu.swift in Sources */,
 				A1869B8D2360A8000088AA9A /* Extensions.swift in Sources */,
 				A168F0BE22FAFAC300A9E178 /* OrderViewController.swift in Sources */,
 				A168F0BC22FAF9B800A9E178 /* MenuItemTableViewCell.swift in Sources */,
 				A168F0A022F7FB2C00A9E178 /* AppDelegate.swift in Sources */,
 				A168F0B822FADE7000A9E178 /* Model.swift in Sources */,
+				62D73B382C7B37100038EA94 /* MenuListViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,7 +454,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 77YZ9248DM;
 				INFOPLIST_FILE = "RxSwift+MVVM/App/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -466,7 +474,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 77YZ9248DM;
 				INFOPLIST_FILE = "RxSwift+MVVM/App/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
