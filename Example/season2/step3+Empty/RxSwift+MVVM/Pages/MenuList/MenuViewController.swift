@@ -37,15 +37,11 @@ class MenuViewController: UIViewController {
         
         viewModel.itemsCount
             .map { "\($0)"}
-            .observe(on: MainScheduler.instance)
-//            .subscribe(onNext: {
-//                self.itemCountLabel.text = $0
-//            })
-            .bind(to: itemCountLabel.rx.text)   //rx는 바인딩을 해줄 수 있는데 주석의 부분과 역할이 동일하고, 바인드를 쓸 경우 순환참조없이 사용가능
+            .asDriver(onErrorJustReturn: "")        //observeOn + bind
+            .drive(itemCountLabel.rx.text)          //항상 메인쓰레드에서 동작한다.
             .disposed(by: disposeBag)
 
         viewModel.totalPrice
-        
 //            .scan(0, accumulator: +)        //0부터 시작해서 기존의 값을 더해라
             .map { $0.currencyKR() }
             .observe(on: MainScheduler.instance)

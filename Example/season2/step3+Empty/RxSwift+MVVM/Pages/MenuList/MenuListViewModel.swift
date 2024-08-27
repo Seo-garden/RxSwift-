@@ -8,11 +8,10 @@
 
 import Foundation
 import RxSwift
+import RxRelay
 
-class MenuListViewModel {
-    
-    
-    lazy var menuObservable = BehaviorSubject<[Menu]>(value: [])
+class MenuListViewModel {    
+    lazy var menuObservable = BehaviorRelay<[Menu]>(value: [])
     
     lazy var itemsCount = menuObservable.map {
         $0.map { $0.count}.reduce(0, +)
@@ -21,16 +20,27 @@ class MenuListViewModel {
     lazy var totalPrice = menuObservable.map {
         $0.map { $0.price * $0.count}.reduce(0, +)
     }
-
+    
     init() {
-        var menus: [Menu] = [
-            Menu(id: 0, name: "튀김1", price: 100, count: 0),
-            Menu(id: 1, name: "튀김2", price: 200, count: 0),
-            Menu(id: 2, name: "튀김3", price: 300, count: 0),
-            Menu(id: 3, name: "튀김4", price: 400, count: 0)
-        ]
-        
-        menuObservable.onNext(menus)
+        _ = APIService.fetchAllMenusRx()
+            .map { data -> [MenuItem] in
+                struct Response: Decodable {
+                    let menus: [MenuItem]
+                }
+                let response = try! JSONDecoder().decode(Response.self, from: data)
+                
+                return response.menus
+            }
+            .map { menuItems in
+                var menus: [Menu] = []
+                menuItems.enumerated().forEach { index, item in
+                    let menu =  Menu.fromMenuItems(id: index, item: item)
+                    menus.append(menu)
+                }
+                return menus
+            }
+            .take(1)
+            .bind(to: menuObservable)
     }
     
     func onOrder() {
@@ -47,10 +57,10 @@ class MenuListViewModel {
             }
             .take(1)        //한번만 실행할꺼.
             .subscribe(onNext: {
-                self.menuObservable.onNext($0)
+                self.menuObservable.accept($0)
             })
     }
-
+    
     func changeCount(item: Menu, increase: Int) {
         _ =  menuObservable
             .map { menus in
@@ -64,7 +74,7 @@ class MenuListViewModel {
             }
             .take(1)        //한번만 실행할꺼.
             .subscribe(onNext: {
-                self.menuObservable.onNext($0)
+                self.menuObservable.accept($0)
             })
     }
 }
