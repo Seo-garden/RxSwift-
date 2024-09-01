@@ -7,9 +7,8 @@
 //
 
 import UIKit
-import RxSwift
 import RxCocoa
-
+import RxSwift
 
 class MenuViewController: UIViewController {
     // MARK: - Life Cycle
@@ -21,9 +20,10 @@ class MenuViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+    
         viewModel.menuObservable
+        //rxCocoa 의 rx 를 쓰게 되면 Binder
+        //.bing 를 쓰게 될 경우 subscribe 를 하지 않아도 된다. 순환참조를 하지 않아서 [weak self] 도 쓰지 않는다.
             .bind(to: tableView.rx.items(cellIdentifier: cellId, cellType: MenuItemTableViewCell.self)) { index, item, cell in
                 cell.title.text = item.name
                 cell.price.text = "\(item.price)"
@@ -33,7 +33,6 @@ class MenuViewController: UIViewController {
                     self?.viewModel.changeCount(item: item, increase: increase)
                 }
             }.disposed(by: disposeBag)
-        
         
         viewModel.itemsCount
             .map { "\($0)"}
@@ -48,7 +47,7 @@ class MenuViewController: UIViewController {
 //            .subscribe(onNext: {
 //                self.totalPrice.text = $0
 //            })
-            .bind(to: totalPrice.rx.text)
+            .bind(to: totalPrice.rx.text)       //위의 주석과 동일한 동작.
             .disposed(by: disposeBag)
     }
     

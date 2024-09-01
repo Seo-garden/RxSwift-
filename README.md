@@ -8,3 +8,6 @@
 3. .debug()    .subscribe 전의 데이터가 전달되는 동안 전달되는 데이터를 다 찍어낼 수 있다.  
 4. .observe(on: MainScheduler.instance) 메인쓰레드로 변경되는데, subscribe 라던지 아래에 오는 코드(다운스트림) 모두 메인쓰레드에서 실행된다.  
 5. onError or onCompleted() 를 하게 되면 클로저가 해제되면서 메모리가 해제되는데, onError(), onCompleted() 를 선언하지 않고 사용하게 될 경우, 메모리가 해제되지 않는데, onNext() 처리를 해주고 disposeBag 을 해주면 메모리가 해제된다.  
+
+6. Observable 은 값을 넘겨주는데, 값을 외부에서 받아들일 순 없다. 외부에서 값을 컨트롤 할 수 있는 타입이 Subject 이다.  
+7. .bind 를 사용하게 되면, 자동으로 subscribe 를 하게 될 뿐더러, 순환참조를 하지 않아 [weak self] 를 쓰지 않아도 된다.

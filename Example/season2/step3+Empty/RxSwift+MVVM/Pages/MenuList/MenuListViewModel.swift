@@ -13,12 +13,14 @@ import RxRelay
 class MenuListViewModel {    
     lazy var menuObservable = BehaviorRelay<[Menu]>(value: [])
     
+    var disposeBag: DisposeBag = DisposeBag()
+    
     lazy var itemsCount = menuObservable.map {
-        $0.map { $0.count}.reduce(0, +)
+        $0.map { $0.count }.reduce(0, +)
     }
     
     lazy var totalPrice = menuObservable.map {
-        $0.map { $0.price * $0.count}.reduce(0, +)
+        $0.map { $0.price * $0.count }.reduce(0, +)
     }
     
     init() {
@@ -32,12 +34,13 @@ class MenuListViewModel {
                 return response.menus
             }
             .map { menuItems in
-                var menus: [Menu] = []
-                menuItems.enumerated().forEach { index, item in
-                    let menu =  Menu.fromMenuItems(id: index, item: item)
-                    menus.append(menu)
-                }
-                return menus
+//                var menus: [Menu] = []
+//                menuItems.enumerated().forEach { index, item in
+//                    let menu =  Menu.fromMenuItems(id: index, item: item)
+//                    menus.append(menu)
+//                }
+//                return menus
+                return menuItems.map { Menu.menuItemToMenu(menuItem: $0) }
             }
             .take(1)
             .bind(to: menuObservable)
@@ -48,7 +51,7 @@ class MenuListViewModel {
     }
     
     func clearAllItemSelections() {
-        menuObservable
+        _ = menuObservable
             .map { menus in
                 return menus.map { m in
                     Menu(id: m.id, name: m.name, price: m.price, count: 0)
@@ -62,19 +65,21 @@ class MenuListViewModel {
     }
     
     func changeCount(item: Menu, increase: Int) {
-        _ =  menuObservable
-            .map { menus in
-                return menus.map { m in
-                    if m.id == item.id {
-                        return Menu(id: m.id, name: m.name, price: m.price, count: max(m.count + increase, 0))
-                    } else {
-                        return Menu(id: m.id, name: m.name, price: m.price, count: m.count)
+            _ =  menuObservable
+                .debug()
+                .map { menus in
+                    return menus.map { m in
+                        if m.id == item.id {
+                            let newValue = max(m.count + increase, 0)
+                            return Menu(id: m.id, name: m.name, price: m.price, count: newValue)
+                        } else {
+                            return Menu(id: m.id, name: m.name, price: m.price, count: m.count)
+                        }
                     }
                 }
-            }
-            .take(1)        //한번만 실행할꺼.
-            .subscribe(onNext: {
-                self.menuObservable.accept($0)
-            })
-    }
+                .take(1)
+                .subscribe(onNext: {
+                    self.menuObservable.accept($0)
+                })
+        }
 }
