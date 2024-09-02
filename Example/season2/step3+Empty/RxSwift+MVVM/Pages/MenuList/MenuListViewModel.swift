@@ -21,7 +21,7 @@ class MenuListViewModel {
     
     lazy var totalPrice = menuObservable.map {
         $0.map { $0.price * $0.count }.reduce(0, +)
-    }
+    } 
     
     init() {
         _ = APIService.fetchAllMenusRx()

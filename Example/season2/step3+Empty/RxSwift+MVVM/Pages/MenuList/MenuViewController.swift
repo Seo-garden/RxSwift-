@@ -13,7 +13,7 @@ import RxSwift
 class MenuViewController: UIViewController {
     // MARK: - Life Cycle
     
-    let cellId = "MenuItemTableViewCell"
+    let cellIdentifier = "MenuItemTableViewCell"
     
     let viewModel: MenuListViewModel = MenuListViewModel()
     var disposeBag: DisposeBag = DisposeBag()
@@ -24,7 +24,7 @@ class MenuViewController: UIViewController {
         viewModel.menuObservable
         //rxCocoa 의 rx 를 쓰게 되면 Binder
         //.bing 를 쓰게 될 경우 subscribe 를 하지 않아도 된다. 순환참조를 하지 않아서 [weak self] 도 쓰지 않는다.
-            .bind(to: tableView.rx.items(cellIdentifier: cellId, cellType: MenuItemTableViewCell.self)) { index, item, cell in
+            .bind(to: tableView.rx.items(cellIdentifier: cellIdentifier, cellType: MenuItemTableViewCell.self)) { index, item, cell in
                 cell.title.text = item.name
                 cell.price.text = "\(item.price)"
                 cell.count.text = "\(item.count)"
@@ -72,11 +72,11 @@ class MenuViewController: UIViewController {
     @IBOutlet var itemCountLabel: UILabel!
     @IBOutlet var totalPrice: UILabel!
     
-    @IBAction func onClear() {
+    @IBAction private func onClear() {
         viewModel.clearAllItemSelections()
     }
     
-    @IBAction func onOrder(_ sender: UIButton) {
+    @IBAction private func onOrder(_ sender: UIButton) {
         viewModel.onOrder()
     }
 }
