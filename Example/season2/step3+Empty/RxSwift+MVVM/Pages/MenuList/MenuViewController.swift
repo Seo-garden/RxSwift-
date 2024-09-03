@@ -13,7 +13,7 @@ import RxSwift
 class MenuViewController: UIViewController {
     // MARK: - Life Cycle
     
-    let cellIdentifier = "MenuItemTableViewCell"
+    let cellIdentifier = "Me nuItemTableViewCell"
     
     let viewModel: MenuListViewModel = MenuListViewModel()
     var disposeBag: DisposeBag = DisposeBag()
